@@ -7,12 +7,9 @@ import re
 # APIキーの設定
 openai.api_key = os.environ['OPENAI_API_KEY']
 
-# プロンプトの設定
-PROMPT = "あなたはこれからチャットボットとして振る舞ってください。"
-
 template = """
 ```
-このコマンドを説明して下さい
+このコマンドを説明して下さい。
 """
 
 def main():
@@ -24,12 +21,14 @@ def main():
             if match:
                 if match.groups()[0] == "$":
                     continue
+                if match.groups()[0] == ".":
+                    continue
                 if match.groups()[2] == "=":
                     continue
-                command = match.groups()[1]
-                if command == ".PHONY":
+                if match.groups()[1] == ".PHONY":
                     continue
-                
+
+                command = match.groups()[1]
                 print("command: " + command)
                 input_message = "```\n" + resolve_dependency(command) + template
                 output_message = create_response(input_message)
@@ -37,13 +36,6 @@ def main():
                 print("\n----------\n")
         else:
             break
-
-    # with open("./Makefile") as f:
-    #     makefile = f.read()
-    #     input_message = "```\n" + makefile + template
-
-    #     output_message = create_response(input_message)
-    #     print(output_message)
 
 def resolve_dependency(make_command):
     cmd = 'make -n ' + make_command

@@ -1,3 +1,0 @@
-.PHONY:lss
-lss:
-	ls ~/
